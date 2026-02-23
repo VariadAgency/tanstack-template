@@ -205,7 +205,7 @@ function Home() {
       </div>
       
       {/* Mobile Header */}
-      <div className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between p-4 border-b border-white/5 bg-[#020617]/80 backdrop-blur-md md:hidden">
+      <div className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between p-4 mobile-header-variad md:hidden">
         <button
           onClick={() => setIsSidebarOpen(true)}
           className="p-2 text-slate-400 hover:text-blue-400 transition-colors"

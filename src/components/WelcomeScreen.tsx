@@ -16,7 +16,7 @@ export const WelcomeScreen = ({
   <div className="flex items-center justify-center flex-1 px-4">
     <div className="w-full max-w-3xl mx-auto text-center">
       <h1 className="mb-4 text-4xl font-bold text-transparent uppercase md:text-6xl bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text">
-        <span className="text-white">TanStack</span> Chat
+        <span className="text-white">TIM-KEK</span> Chat
       </h1>
       <p className="w-full mx-auto mb-6 text-base text-gray-400 md:w-2/3 md:text-lg">
         You can ask me about anything, I might or might not have a good

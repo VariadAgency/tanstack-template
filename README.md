@@ -1,4 +1,4 @@
-# TanStack Chat Template
+# TIM-KEK Chat Template
 
 ![TanStack Starter Preview](tanstack-starter-preview.jpg)
 

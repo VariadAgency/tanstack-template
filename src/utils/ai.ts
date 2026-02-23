@@ -7,7 +7,7 @@ export interface Message {
   content: string
 }
 
-const DEFAULT_SYSTEM_PROMPT = `You are TanStack Chat, an AI assistant using Markdown for clear and structured responses. Format your responses following these guidelines:
+const DEFAULT_SYSTEM_PROMPT = `You are TIM-KEK Chat, an AI assistant using Markdown for clear and structured responses. Format your responses following these guidelines:
 
 1. Use headers for sections:
    # For main topics

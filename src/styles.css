@@ -10,11 +10,11 @@
   --variad-surface: rgba(255, 255, 255, 0.02);
   
   /* Vibrant Glow Colors */
-  --glow-cyan: rgba(6, 182, 212, 0.8);    /* Cyan 500 - Knallig */
-  --glow-turquoise: rgba(20, 184, 166, 0.7); /* Teal 500 */
-  --glow-electric: rgba(59, 130, 246, 0.8);  /* Blue 500 */
-  --glow-deep: rgba(30, 58, 138, 0.9);      /* Blue 900 - Kontrast */
-  --glow-aqua: rgba(34, 211, 238, 0.6);      /* Cyan 400 */
+  --glow-cyan: rgba(6, 182, 212, 0.9);    /* Höhere Deckkraft */
+  --glow-turquoise: rgba(20, 184, 166, 0.8); 
+  --glow-electric: rgba(59, 130, 246, 0.9);  
+  --glow-deep: rgba(30, 58, 138, 0.95);      
+  --glow-aqua: rgba(34, 211, 238, 0.7);      
 }
 
 body {
@@ -26,13 +26,13 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* 2026 Dynamic High-Vibrancy Glow Engine */
+/* 2026 Dynamic High-Vibrancy Glow Engine - SPEED & BRIGHTNESS OPTIMIZED */
 .bg-glow-container {
   position: fixed;
   inset: 0;
   z-index: -2;
   overflow: hidden;
-  background-color: #010413;
+  background-color: #01030c;
   pointer-events: none;
 }
 
@@ -41,42 +41,44 @@ body {
   border-radius: 50%;
   will-change: transform, opacity;
   mix-blend-mode: screen;
-  filter: blur(80px) saturate(200%);
+  filter: blur(70px) saturate(220%) contrast(110%);
 }
 
-/* Specific Glow Blobs with different sizes and vibrant centers */
+/* 30% Faster Animations and more Vibrant Pulsing */
 .glow.g1 { 
   width: 65vmax; height: 65vmax;
-  background: radial-gradient(circle at center, var(--glow-cyan) 0%, rgba(6,182,212,0) 60%); 
+  background: radial-gradient(circle at center, var(--glow-cyan) 0%, rgba(6,182,212,0) 65%); 
   top: -10%; left: -10%; 
-  animation: float-v1 18s infinite alternate ease-in-out, pulse-v1 8s infinite alternate; 
+  animation: float-v1 12s infinite alternate ease-in-out, pulse-v1 5s infinite alternate; 
 }
 .glow.g2 { 
   width: 55vmax; height: 55vmax;
-  background: radial-gradient(circle at center, var(--glow-turquoise) 0%, rgba(20,184,166,0) 60%); 
+  background: radial-gradient(circle at center, var(--glow-turquoise) 0%, rgba(20,184,166,0) 65%); 
   bottom: -5%; right: -5%; 
-  animation: float-v2 22s infinite alternate ease-in-out, pulse-v2 10s infinite alternate; 
+  animation: float-v2 15s infinite alternate ease-in-out, pulse-v2 6s infinite alternate; 
+  animation-delay: -1s;
 }
 .glow.g3 { 
   width: 45vmax; height: 45vmax;
-  background: radial-gradient(circle at center, var(--glow-electric) 0%, rgba(59,130,246,0) 60%); 
+  background: radial-gradient(circle at center, var(--glow-electric) 0%, rgba(59,130,246,0) 65%); 
   top: 20%; right: 10%; 
-  animation: float-v3 25s infinite alternate ease-in-out, pulse-v1 12s infinite alternate; 
+  animation: float-v3 17s infinite alternate ease-in-out, pulse-v1 7s infinite alternate; 
+  animation-delay: -2s;
 }
 .glow.g4 { 
   width: 60vmax; height: 60vmax;
-  background: radial-gradient(circle at center, var(--glow-deep) 0%, rgba(30,58,138,0) 60%); 
+  background: radial-gradient(circle at center, var(--glow-deep) 0%, rgba(30,58,138,0) 65%); 
   bottom: 10%; left: 10%; 
-  animation: float-v1 20s infinite alternate-reverse ease-in-out, pulse-v2 9s infinite alternate; 
+  animation: float-v1 14s infinite alternate-reverse ease-in-out, pulse-v2 5.5s infinite alternate; 
 }
 .glow.g5 { 
   width: 40vmax; height: 40vmax;
-  background: radial-gradient(circle at center, var(--glow-aqua) 0%, rgba(34,211,238,0) 60%); 
+  background: radial-gradient(circle at center, var(--glow-aqua) 0%, rgba(34,211,238,0) 65%); 
   top: 40%; left: 30%; 
-  animation: float-v2 15s infinite alternate ease-in-out, pulse-v1 7s infinite alternate; 
+  animation: float-v2 10s infinite alternate ease-in-out, pulse-v1 4s infinite alternate; 
 }
 
-/* Individual Floating Paths */
+/* Floating Paths */
 @keyframes float-v1 { 
   0% { transform: translate3d(-15%, -15%, 0) scale(1) rotate(0deg); } 
   100% { transform: translate3d(25%, 20%, 0) scale(1.1) rotate(90deg); } 
@@ -90,9 +92,9 @@ body {
   100% { transform: translate3d(15%, -15%, 0) scale(1.2) rotate(-45deg); } 
 }
 
-/* Individual Pulsing (Brightness/Size) */
-@keyframes pulse-v1 { 0% { opacity: 0.2; filter: blur(80px); } 100% { opacity: 0.5; filter: blur(110px); } }
-@keyframes pulse-v2 { 0% { opacity: 0.4; transform: scale(0.95); } 100% { opacity: 0.2; transform: scale(1.05); } }
+/* Intensified Pulsing (Brightness & Size) */
+@keyframes pulse-v1 { 0% { opacity: 0.3; filter: blur(70px) brightness(1); } 100% { opacity: 0.7; filter: blur(90px) brightness(1.3); } }
+@keyframes pulse-v2 { 0% { opacity: 0.6; transform: scale(0.92); } 100% { opacity: 0.3; transform: scale(1.08); } }
 
 /* Subtle Film Grain */
 .film-grain {
@@ -100,7 +102,7 @@ body {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.1; /* Twice as visible as before */
+  opacity: 0.1; 
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3Ex3Cfilter id='noiseFilter'%3Ex3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3Ex3C/filter%3Ex3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3Ex3C/svg%3E");
 }
 
@@ -139,7 +141,7 @@ body {
 /* Typography for Variad */
 .prose {
   max-width: none;
-  color: #cbd5e1; /* slate-300 */
+  color: #cbd5e1;
 }
 
 .prose h1, .prose h2, .prose h3 {

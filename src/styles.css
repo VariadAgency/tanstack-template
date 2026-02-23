@@ -9,86 +9,90 @@
   --variad-border: rgba(255, 255, 255, 0.04);
   --variad-surface: rgba(255, 255, 255, 0.02);
   
-  /* Glow Colors - Blue/Aqua/Dark Theme */
-  --glow-1: rgba(30, 64, 175, 0.6);  /* Blue 800 */
-  --glow-2: rgba(8, 145, 178, 0.5);  /* Cyan 600 */
-  --glow-3: rgba(67, 56, 202, 0.5);  /* Indigo 700 */
-  --glow-4: rgba(2, 132, 199, 0.4);   /* Sky 600 */
-  --glow-5: rgba(14, 116, 144, 0.4);  /* Cyan 700 */
+  /* Vibrant Glow Colors */
+  --glow-cyan: rgba(6, 182, 212, 0.8);    /* Cyan 500 - Knallig */
+  --glow-turquoise: rgba(20, 184, 166, 0.7); /* Teal 500 */
+  --glow-electric: rgba(59, 130, 246, 0.8);  /* Blue 500 */
+  --glow-deep: rgba(30, 58, 138, 0.9);      /* Blue 900 - Kontrast */
+  --glow-aqua: rgba(34, 211, 238, 0.6);      /* Cyan 400 */
 }
 
 body {
   margin: 0;
   background-color: var(--variad-bg);
-  color: #f1f5f9; /* slate-100 */
+  color: #f1f5f9;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   letter-spacing: -0.011em;
   -webkit-font-smoothing: antialiased;
 }
 
-/* 2026 High-End Glow Engine (Inspired by Variad.de) */
+/* 2026 Dynamic High-Vibrancy Glow Engine */
 .bg-glow-container {
   position: fixed;
   inset: 0;
   z-index: -2;
   overflow: hidden;
-  background-color: #020617;
+  background-color: #010413;
   pointer-events: none;
 }
 
 .glow {
   position: absolute;
-  width: 100vmax;
-  height: 100vmax;
   border-radius: 50%;
-  opacity: 0.45;
   will-change: transform, opacity;
-  mix-blend-mode: plus-lighter;
-  filter: blur(120px) saturate(180%);
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
+  mix-blend-mode: screen;
+  filter: blur(80px) saturate(200%);
 }
 
-/* GPU-accelerated Animations for smooth 60fps movement */
-@keyframes floatA { 0% { transform: translate3d(-20%, 10%, 0) scale(1); } 100% { transform: translate3d(20%, -10%, 0) scale(1.1); } }
-@keyframes floatB { 0% { transform: translate3d(15%, 15%, 0) scale(1.2); } 100% { transform: translate3d(-15%, -15%, 0) scale(0.9); } }
-@keyframes floatC { 0% { transform: translate3d(-10%, -20%, 0) scale(0.95); } 100% { transform: translate3d(10%, 20%, 0) scale(1.1); } }
-@keyframes floatD { 0% { transform: translate3d(20%, -15%, 0) scale(1.1); } 100% { transform: translate3d(-20%, 15%, 0) scale(0.95); } }
-@keyframes floatE { 0% { transform: translate3d(5%, 10%, 0) scale(1); } 100% { transform: translate3d(-15%, -15%, 0) scale(1.2); } }
-
-@keyframes pulse { 0% { opacity: 0.35; } 100% { opacity: 0.55; } }
-
-/* Glow Elements with fast, smooth transitions */
+/* Specific Glow Blobs with different sizes and vibrant centers */
 .glow.g1 { 
-  background: radial-gradient(closest-side, var(--glow-1), rgba(30,64,175,0)); 
-  top: -20%; left: -30%; 
-  animation: floatA 8s infinite alternate, pulse 5s infinite alternate; 
+  width: 65vmax; height: 65vmax;
+  background: radial-gradient(circle at center, var(--glow-cyan) 0%, rgba(6,182,212,0) 60%); 
+  top: -10%; left: -10%; 
+  animation: float-v1 18s infinite alternate ease-in-out, pulse-v1 8s infinite alternate; 
 }
 .glow.g2 { 
-  background: radial-gradient(closest-side, var(--glow-2), rgba(8,145,178,0)); 
-  bottom: -20%; right: -25%; 
-  animation: floatB 9s infinite alternate, pulse 6s infinite alternate; 
-  animation-delay: -2s;
+  width: 55vmax; height: 55vmax;
+  background: radial-gradient(circle at center, var(--glow-turquoise) 0%, rgba(20,184,166,0) 60%); 
+  bottom: -5%; right: -5%; 
+  animation: float-v2 22s infinite alternate ease-in-out, pulse-v2 10s infinite alternate; 
 }
 .glow.g3 { 
-  background: radial-gradient(closest-side, var(--glow-3), rgba(67,56,202,0)); 
-  top: 10%; right: -15%; 
-  animation: floatC 10s infinite alternate, pulse 7s infinite alternate; 
-  animation-delay: -3s;
+  width: 45vmax; height: 45vmax;
+  background: radial-gradient(circle at center, var(--glow-electric) 0%, rgba(59,130,246,0) 60%); 
+  top: 20%; right: 10%; 
+  animation: float-v3 25s infinite alternate ease-in-out, pulse-v1 12s infinite alternate; 
 }
 .glow.g4 { 
-  background: radial-gradient(closest-side, var(--glow-4), rgba(2,132,199,0)); 
-  bottom: 15%; left: -15%; 
-  animation: floatD 8.5s infinite alternate, pulse 5.5s infinite alternate; 
-  animation-delay: -1.5s;
+  width: 60vmax; height: 60vmax;
+  background: radial-gradient(circle at center, var(--glow-deep) 0%, rgba(30,58,138,0) 60%); 
+  bottom: 10%; left: 10%; 
+  animation: float-v1 20s infinite alternate-reverse ease-in-out, pulse-v2 9s infinite alternate; 
 }
 .glow.g5 { 
-  background: radial-gradient(closest-side, var(--glow-5), rgba(14,116,144,0)); 
-  top: 30%; left: 20%; 
-  animation: floatE 11s infinite alternate, pulse 6.5s infinite alternate; 
-  animation-delay: -2.5s;
+  width: 40vmax; height: 40vmax;
+  background: radial-gradient(circle at center, var(--glow-aqua) 0%, rgba(34,211,238,0) 60%); 
+  top: 40%; left: 30%; 
+  animation: float-v2 15s infinite alternate ease-in-out, pulse-v1 7s infinite alternate; 
 }
+
+/* Individual Floating Paths */
+@keyframes float-v1 { 
+  0% { transform: translate3d(-15%, -15%, 0) scale(1) rotate(0deg); } 
+  100% { transform: translate3d(25%, 20%, 0) scale(1.1) rotate(90deg); } 
+}
+@keyframes float-v2 { 
+  0% { transform: translate3d(20%, 10%, 0) scale(1.1) rotate(0deg); } 
+  100% { transform: translate3d(-20%, -25%, 0) scale(0.9) rotate(-180deg); } 
+}
+@keyframes float-v3 { 
+  0% { transform: translate3d(-10%, 25%, 0) scale(0.9) rotate(45deg); } 
+  100% { transform: translate3d(15%, -15%, 0) scale(1.2) rotate(-45deg); } 
+}
+
+/* Individual Pulsing (Brightness/Size) */
+@keyframes pulse-v1 { 0% { opacity: 0.2; filter: blur(80px); } 100% { opacity: 0.5; filter: blur(110px); } }
+@keyframes pulse-v2 { 0% { opacity: 0.4; transform: scale(0.95); } 100% { opacity: 0.2; transform: scale(1.05); } }
 
 /* Subtle Film Grain */
 .film-grain {

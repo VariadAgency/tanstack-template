@@ -193,7 +193,7 @@ function Home() {
   }, [updateConversationTitle]);
 
   return (
-    <div className="relative flex h-screen overflow-hidden bg-[#020617] text-slate-200 selection:bg-blue-500/30">
+    <div className="relative flex h-screen overflow-hidden text-slate-200 selection:bg-blue-500/30">
       {/* High-End Glow Engine (Variad.de Inspired - Blue Edition) */}
       <div className="bg-glow-container">
         <div className="glow g1" />

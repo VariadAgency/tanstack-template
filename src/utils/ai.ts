@@ -7,49 +7,53 @@ export interface Message {
   content: string
 }
 
-const DEFAULT_SYSTEM_PROMPT = `You are TIM-KEK Chat, an AI assistant using Markdown for clear and structured responses. Format your responses following these guidelines:
+// Helper to call n8n Webhook from Server-Side to avoid Mixed Content (HTTP vs HTTPS) issues
+export const callN8NWebhook = createServerFn({ method: 'POST' })
+  .inputValidator((d: { prompt: string }) => d)
+  .handler(async ({ data }) => {
+    const N8N_WEBHOOK_URL = 'http://76.13.155.84:22612/webhook/843de30d-bcca-49f6-a8a2-9e5670add116';
+    
+    try {
+      const response = await fetch(N8N_WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: data.prompt
+        }),
+      });
 
-1. Use headers for sections:
-   # For main topics
-   ## For subtopics
-   ### For subsections
+      if (!response.ok) {
+        throw new Error(`n8n Server error: ${response.status} ${response.statusText}`);
+      }
 
-2. For lists and steps:
-   - Use bullet points for unordered lists
-   - Number steps when sequence matters
-   
-3. For code:
-   - Use inline \`code\` for short snippets
-   - Use triple backticks with language for blocks:
-   \`\`\`python
-   def example():
-       return "like this"
-   \`\`\`
+      const result = await response.json();
+      
+      // Extract response text from n8n result
+      let responseText = '';
+      if (typeof result === 'string') {
+        responseText = result;
+      } else if (result.output) {
+        responseText = result.output;
+      } else if (result.response) {
+        responseText = result.response;
+      } else if (result.text) {
+        responseText = result.text;
+      } else {
+        responseText = JSON.stringify(result, null, 2);
+      }
 
-4. For emphasis:
-   - Use **bold** for important points
-   - Use *italics* for emphasis
-   - Use > for important quotes or callouts
+      return { content: responseText };
+    } catch (error) {
+      console.error('Error in n8n server function:', error);
+      throw new Error('Der n8n-Server ist nicht erreichbar oder hat ungültig geantwortet.');
+    }
+  });
 
-5. For structured data:
-   | Use | Tables |
-   |-----|---------|
-   | When | Needed |
+const DEFAULT_SYSTEM_PROMPT = `You are TIM-KEK-AI, an AI assistant using Markdown for clear and structured responses.`
 
-6. Break up long responses with:
-   - Clear section headers
-   - Appropriate spacing between sections
-   - Bullet points for better readability
-   - Short, focused paragraphs
-
-7. For technical content:
-   - Always specify language for code blocks
-   - Use inline \`code\` for technical terms
-   - Include example usage where helpful
-
-Keep responses concise and well-structured. Use appropriate Markdown formatting to enhance readability and understanding.`
-
-// Non-streaming implementation
+// Non-streaming implementation (Legacy/Anthropic)
 export const genAIResponse = createServerFn({ method: 'GET', response: 'raw' })
   .inputValidator(
     (d: {
@@ -57,125 +61,35 @@ export const genAIResponse = createServerFn({ method: 'GET', response: 'raw' })
       systemPrompt?: { value: string; enabled: boolean }
     }) => d,
   )
-  // .middleware([loggingMiddleware])
   .handler(async ({ data }) => {
-    // Check for API key in environment variables
-    // This should ONLY use server-side environment variables (no VITE_ prefix)
     const apiKey = process.env.ANTHROPIC_API_KEY
-
-    if (!apiKey) {
-      throw new Error(
-        'Missing API key: Please set ANTHROPIC_API_KEY in your environment variables or .env file.'
-      )
-    }
-
-    // Create Anthropic client with proper configuration
-    // Don't set baseURL - Netlify AI Gateway will intercept requests to api.anthropic.com automatically
-    const anthropic = new Anthropic({
-      apiKey,
-      // Add proper timeout to avoid connection issues
-      timeout: 30000 // 30 seconds timeout
-    })
-
-    // Filter out error messages and empty messages
+    if (!apiKey) throw new Error('Missing API key')
+    const anthropic = new Anthropic({ apiKey, timeout: 30000 })
     const formattedMessages = data.messages
-      .filter(
-        (msg) =>
-          msg.content.trim() !== '' &&
-          !msg.content.startsWith('Sorry, I encountered an error'),
-      )
-      .map((msg) => ({
-        role: msg.role,
-        content: msg.content.trim(),
-      }))
-
-    if (formattedMessages.length === 0) {
-      return new Response(JSON.stringify({ error: 'No valid messages to send' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    }
-
-    const systemPrompt = data.systemPrompt?.enabled
-      ? `${DEFAULT_SYSTEM_PROMPT}\n\n${data.systemPrompt.value}`
-      : DEFAULT_SYSTEM_PROMPT
-
-    // Debug log to verify prompt layering
-    console.log('System Prompt Configuration:', {
-      hasCustomPrompt: data.systemPrompt?.enabled,
-      customPromptValue: data.systemPrompt?.value,
-      finalPrompt: systemPrompt,
-    })
+      .filter(msg => msg.content.trim() !== '' && !msg.content.startsWith('Sorry'))
+      .map(msg => ({ role: msg.role, content: msg.content.trim() }))
 
     try {
       const stream = await anthropic.messages.stream({
         model: 'claude-sonnet-4-5-20250929',
         max_tokens: 4096,
-        system: systemPrompt,
+        system: data.systemPrompt?.enabled ? `${DEFAULT_SYSTEM_PROMPT}\n\n${data.systemPrompt.value}` : DEFAULT_SYSTEM_PROMPT,
         messages: formattedMessages,
       })
-
-      // Transform the Anthropic stream to match the expected client format
-      // The client reads chunks and expects each chunk to contain one complete JSON object
       const encoder = new TextEncoder()
       const transformedStream = new ReadableStream({
         async start(controller) {
-          try {
-            for await (const event of stream) {
-              // Only send content_block_delta events with text
-              if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
-                const chunk = {
-                  type: 'content_block_delta',
-                  delta: {
-                    type: 'text_delta',
-                    text: event.delta.text,
-                  },
-                }
-                // Encode each JSON object as a separate chunk
-                // This ensures the decoder can parse each chunk independently
-                controller.enqueue(encoder.encode(JSON.stringify(chunk) + '\n'))
-              }
+          for await (const event of stream) {
+            if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+              const chunk = { type: 'content_block_delta', delta: { type: 'text_delta', text: event.delta.text } }
+              controller.enqueue(encoder.encode(JSON.stringify(chunk) + '\n'))
             }
-            controller.close()
-          } catch (error) {
-            console.error('Stream error:', error)
-            controller.error(error)
           }
+          controller.close()
         },
       })
-
-      return new Response(transformedStream, {
-        headers: {
-          'Content-Type': 'application/x-ndjson',
-        },
-      })
-    } catch (error) {
-      console.error('Error in genAIResponse:', error)
-      
-      // Error handling with specific messages
-      let errorMessage = 'Failed to get AI response'
-      let statusCode = 500
-      
-      if (error instanceof Error) {
-        if (error.message.includes('rate limit')) {
-          errorMessage = 'Rate limit exceeded. Please try again in a moment.'
-        } else if (error.message.includes('Connection error') || error.name === 'APIConnectionError') {
-          errorMessage = 'Connection to Anthropic API failed. Please check your internet connection and API key.'
-          statusCode = 503 // Service Unavailable
-        } else if (error.message.includes('authentication')) {
-          errorMessage = 'Authentication failed. Please check your Anthropic API key.'
-          statusCode = 401 // Unauthorized
-        } else {
-          errorMessage = error.message
-        }
-      }
-      
-      return new Response(JSON.stringify({ 
-        error: errorMessage,
-        details: error instanceof Error ? error.name : undefined
-      }), {
-        status: statusCode,
-        headers: { 'Content-Type': 'application/json' },
-      })
+      return new Response(transformedStream, { headers: { 'Content-Type': 'application/x-ndjson' } })
+    } catch (error: any) {
+      return new Response(JSON.stringify({ error: error.message }), { status: 500 })
     }
-  }) 
+  })

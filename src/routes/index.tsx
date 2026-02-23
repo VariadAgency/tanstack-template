@@ -9,7 +9,7 @@ import {
   WelcomeScreen,
 } from '../components'
 import { useConversations, useAppState, actions } from '../store'
-import { type Message } from '../utils'
+import { type Message, callN8NWebhook } from '../utils'
 
 function Home() {
   const {
@@ -66,46 +66,16 @@ function Home() {
 
   // New helper function to process response from n8n
   const processN8NResponse = useCallback(async (conversationId: string, userMessage: Message) => {
-    const N8N_WEBHOOK_URL = 'http://76.13.155.84:22612/webhook/843de30d-bcca-49f6-a8a2-9e5670add116';
-    
     try {
       setLoading(true);
       
-      const response = await fetch(N8N_WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          prompt: userMessage.content
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`n8n Server error: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      
-      // Extract the response text - assuming n8n returns something like { "output": "..." } or just the text
-      // We'll try common response fields or stringify if it's an object
-      let responseText = '';
-      if (typeof data === 'string') {
-        responseText = data;
-      } else if (data.output) {
-        responseText = data.output;
-      } else if (data.response) {
-        responseText = data.response;
-      } else if (data.text) {
-        responseText = data.text;
-      } else {
-        responseText = JSON.stringify(data, null, 2);
-      }
+      // Call server function to avoid Mixed Content issues (HTTPS -> HTTP)
+      const result = await callN8NWebhook({ data: { prompt: userMessage.content } });
 
       const assistantMessage: Message = {
         id: Date.now().toString(),
         role: 'assistant' as const,
-        content: responseText,
+        content: result.content,
       };
 
       await addMessage(conversationId, assistantMessage);

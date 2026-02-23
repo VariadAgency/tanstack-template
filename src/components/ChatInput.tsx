@@ -13,10 +13,10 @@ export const ChatInput = ({
   handleSubmit, 
   isLoading 
 }: ChatInputProps) => (
-  <div className="fixed bottom-0 left-0 right-0 z-10 border-t bg-gray-900/80 backdrop-blur-sm border-orange-500/10 md:left-64">
-    <div className="w-full max-w-3xl px-4 py-3 mx-auto">
+  <div className="fixed bottom-0 left-0 right-0 z-20 md:left-64 p-4 md:p-8">
+    <div className="w-full max-w-3xl mx-auto">
       <form onSubmit={handleSubmit}>
-        <div className="relative">
+        <div className="relative group">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -26,10 +26,10 @@ export const ChatInput = ({
                 handleSubmit(e)
               }
             }}
-            placeholder="Type something clever..."
-            className="w-full py-3 pl-4 pr-12 overflow-hidden text-sm text-white placeholder-gray-400 border rounded-lg shadow-lg resize-none border-orange-500/20 bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-transparent"
+            placeholder="Talk to TIM-KEK..."
+            className="w-full py-4 pl-6 pr-14 overflow-hidden text-sm text-white placeholder-slate-500 rounded-2xl glass-panel focus:bg-white/10 focus:ring-1 focus:ring-cyan-400/50 focus:border-cyan-400/30 transition-all duration-300 resize-none shadow-2xl"
             rows={1}
-            style={{ minHeight: '44px', maxHeight: '200px' }}
+            style={{ minHeight: '56px', maxHeight: '200px' }}
             onInput={(e) => {
               const target = e.target as HTMLTextAreaElement
               target.style.height = 'auto'
@@ -40,9 +40,9 @@ export const ChatInput = ({
           <button
             type="submit"
             disabled={!input.trim() || isLoading}
-            className="absolute p-2 text-orange-500 transition-colors -translate-y-1/2 right-2 top-1/2 hover:text-orange-400 disabled:text-gray-500 focus:outline-none"
+            className="absolute p-3 text-cyan-400 transition-all -translate-y-1/2 right-2 top-1/2 hover:scale-110 active:scale-95 disabled:text-slate-600 disabled:opacity-50"
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-5 h-5" />
           </button>
         </div>
       </form>

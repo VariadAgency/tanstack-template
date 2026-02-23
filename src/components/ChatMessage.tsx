@@ -11,24 +11,24 @@ interface ChatMessageProps {
 
 export const ChatMessage = ({ message, isStreaming = false }: ChatMessageProps) => (
   <div
-    className={`py-4 md:py-6 streaming-message ${
+    className={`py-6 px-4 md:px-0 transition-all duration-500 rounded-3xl ${
       message.role === 'assistant'
-        ? 'bg-gradient-to-r from-orange-500/5 to-red-600/5'
+        ? 'bg-white/5 border border-white/5 shadow-inner'
         : 'bg-transparent'
     }`}
   >
-    <div className="flex items-start w-full max-w-3xl gap-3 px-2 mx-auto md:gap-4 md:px-4">
+    <div className="flex items-start w-full max-w-3xl gap-4 mx-auto md:gap-6">
       {message.role === 'assistant' ? (
-        <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 text-sm font-medium text-white rounded-lg bg-gradient-to-r from-orange-500 to-red-600">
-          AI
+        <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 text-[10px] font-black tracking-tighter text-white rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 shadow-lg shadow-cyan-500/20">
+          TIM
         </div>
       ) : (
-        <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 text-sm font-medium text-white bg-gray-700 rounded-lg">
-          Y
+        <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 text-[10px] font-black text-slate-400 border border-white/10 rounded-xl bg-white/5">
+          YOU
         </div>
       )}
       <div className={`flex-1 min-w-0 ${isStreaming ? 'streaming-cursor' : ''}`}>
-        <div className="overflow-x-auto prose dark:prose-invert max-w-none prose-sm md:prose-base">
+        <div className="overflow-x-auto prose dark:prose-invert max-w-none prose-sm md:prose-base leading-relaxed">
           <ReactMarkdown
             rehypePlugins={[
               rehypeRaw,

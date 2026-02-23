@@ -296,21 +296,29 @@ function Home() {
   }, [updateConversationTitle]);
 
   return (
-    <div className="relative flex h-screen bg-gray-900">
+    <div className="relative flex h-screen overflow-hidden text-slate-200 selection:bg-cyan-500/30">
+      {/* 2026 Background Engine */}
+      <div className="bg-glow-container">
+        <div className="blob blob-1" />
+        <div className="blob blob-2" />
+        <div className="blob blob-3" />
+        <div className="film-grain" />
+      </div>
+
       {/* Mobile Header */}
-      <div className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between p-4 bg-gray-900 border-b border-gray-800 md:hidden">
+      <div className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between p-4 glass-panel md:hidden">
         <button
           onClick={() => setIsSidebarOpen(true)}
-          className="p-2 text-gray-400 hover:text-white"
+          className="p-2 text-slate-400 hover:text-cyan-400 transition-colors"
         >
           <Menu className="w-6 h-6" />
         </button>
-        <span className="text-sm font-semibold text-white truncate">
-          {currentConversation?.title || 'New Chat'}
+        <span className="text-xs font-bold tracking-widest uppercase text-slate-400">
+          {currentConversation?.title || 'TIM-KEK'}
         </span>
         <button
           onClick={() => setIsSettingsOpen(true)}
-          className="p-2 text-gray-400 hover:text-white"
+          className="p-2 text-slate-400 hover:text-cyan-400 transition-colors"
         >
           <Settings className="w-6 h-6" />
         </button>
@@ -320,9 +328,9 @@ function Home() {
       <div className="absolute z-50 hidden top-5 right-5 md:block">
         <button
           onClick={() => setIsSettingsOpen(true)}
-          className="flex items-center justify-center w-10 h-10 text-white transition-opacity rounded-full bg-gradient-to-r from-orange-500 to-red-600 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-orange-500"
+          className="flex items-center justify-center w-10 h-10 transition-all duration-300 rounded-full glass-panel hover:bg-white/10 group focus:outline-none"
         >
-          <Settings className="w-5 h-5" />
+          <Settings className="w-5 h-5 group-hover:rotate-45 transition-transform text-slate-400 group-hover:text-cyan-400" />
         </button>
       </div>
 
@@ -343,19 +351,19 @@ function Home() {
       />
 
       {/* Main Content */}
-      <div className="flex flex-col flex-1 min-w-0 pt-16 md:pt-0">
+      <div className="flex flex-col flex-1 min-w-0 pt-16 md:pt-0 relative z-10">
         <TopBanner />
         {error && (
-          <p className="w-full max-w-3xl p-4 mx-auto font-bold text-orange-500">{error}</p>
+          <p className="w-full max-w-3xl p-4 mx-auto font-bold text-cyan-400 animate-pulse">{error}</p>
         )}
         {currentConversationId ? (
           <>
             {/* Messages */}
             <div
               ref={messagesContainerRef}
-              className="flex-1 pb-24 overflow-y-auto messages-container"
+              className="flex-1 pb-32 overflow-y-auto messages-container no-scrollbar"
             >
-              <div className="w-full max-w-3xl px-4 mx-auto">
+              <div className="w-full max-w-3xl px-4 mx-auto space-y-2">
                 {[...messages, pendingMessage]
                   .filter((message): message is Message => message !== null)
                   .map((message) => (

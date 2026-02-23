@@ -1,14 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState, useRef, useCallback, useMemo } from 'react'
-import { Settings, Menu } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import {
-  SettingsDialog,
   ChatMessage,
   LoadingIndicator,
   ChatInput,
   Sidebar,
   WelcomeScreen,
-  TopBanner
 } from '../components'
 import { useConversations, useAppState, actions } from '../store'
 import { type Message } from '../utils'
@@ -34,7 +32,6 @@ function Home() {
   const [input, setInput] = useState('')
   const [editingChatId, setEditingChatId] = useState<string | null>(null)
   const [editingTitle, setEditingTitle] = useState('')
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const [pendingMessage, setPendingMessage] = useState<Message | null>(null)
@@ -197,8 +194,12 @@ function Home() {
 
   return (
     <div className="relative flex h-screen overflow-hidden bg-[#020617] text-slate-200 selection:bg-blue-500/30">
-      {/* Variad Style Background */}
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-[#020617] to-[#020617]" />
+      {/* Moving Glow Engine (Variad Blue Edition) */}
+      <div className="bg-glow-container">
+        <div className="glow-blob blob-blue" />
+        <div className="glow-blob blob-cyan" />
+        <div className="glow-blob blob-indigo" />
+      </div>
       
       {/* Mobile Header */}
       <div className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between p-4 border-b border-white/5 bg-[#020617]/80 backdrop-blur-md md:hidden">
@@ -211,12 +212,7 @@ function Home() {
         <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-500">
           TIM-KEK &bull; Variad Edition
         </span>
-        <button
-          onClick={() => setIsSettingsOpen(true)}
-          className="p-2 text-slate-400 hover:text-blue-400 transition-colors"
-        >
-          <Settings className="w-6 h-6" />
-        </button>
+        <div className="w-10" />
       </div>
 
       {/* Sidebar */}
@@ -286,11 +282,6 @@ function Home() {
         )}
       </div>
 
-      {/* Settings Dialog */}
-      <SettingsDialog
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-      />
     </div>
   )
 }

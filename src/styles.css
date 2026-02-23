@@ -102,8 +102,8 @@ body {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.1; 
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3Ex3Cfilter id='noiseFilter'%3Ex3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3Ex3C/filter%3Ex3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3Ex3C/svg%3E");
+  opacity: 0.25; /* Significantly increased for a very textured look */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3Ex3Cfilter id='noiseFilter'%3Ex3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3Ex3C/filter%3Ex3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3Ex3C/svg%3E");
 }
 
 /* Minimalist Design Patterns */

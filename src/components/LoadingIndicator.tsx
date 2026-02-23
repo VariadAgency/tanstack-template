@@ -1,36 +1,24 @@
 export const LoadingIndicator = () => (
-  <div className="px-6 py-6 bg-gradient-to-r from-orange-500/5 to-red-600/5">
-    <div className="flex items-start w-full max-w-3xl gap-4 mx-auto">
-      <div className="relative flex-shrink-0 w-8 h-8">
-        <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-orange-500 via-red-500 to-orange-500 animate-[spin_2s_linear_infinite]"></div>
-        <div className="absolute inset-[2px] rounded-lg bg-gray-900 flex items-center justify-center">
-          <div className="relative flex items-center justify-center w-full h-full rounded-lg bg-gradient-to-r from-orange-500 to-red-600">
-            <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-orange-500 to-red-600 animate-pulse"></div>
-            <span className="relative z-10 text-sm font-medium text-white">
-              AI
-            </span>
-          </div>
+  <div className="px-6 py-8 glass-panel rounded-3xl animate-pulse">
+    <div className="flex items-start w-full max-w-3xl gap-4 mx-auto md:gap-6">
+      <div className="relative flex-shrink-0 w-10 h-10">
+        <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 animate-spin blur-sm opacity-50"></div>
+        <div className="absolute inset-[2px] rounded-xl bg-slate-900 flex items-center justify-center">
+          <span className="text-[10px] font-black tracking-tighter text-cyan-400">
+            TIM
+          </span>
         </div>
       </div>
-      <div className="flex items-center gap-3">
-        <div className="text-lg font-medium text-gray-400">
-          Thinking
+      <div className="flex flex-col gap-2">
+        <div className="text-sm font-medium tracking-wide text-cyan-400/80 uppercase">
+          KI verbessert Prompt und generiert Antwort...
         </div>
-        <div className="flex gap-2">
-          <div
-            className="w-2 h-2 rounded-full bg-orange-500 animate-[bounce_0.8s_infinite]"
-            style={{ animationDelay: '0ms' }}
-          ></div>
-          <div
-            className="w-2 h-2 rounded-full bg-orange-500 animate-[bounce_0.8s_infinite]"
-            style={{ animationDelay: '200ms' }}
-          ></div>
-          <div
-            className="w-2 h-2 rounded-full bg-orange-500 animate-[bounce_0.8s_infinite]"
-            style={{ animationDelay: '400ms' }}
-          ></div>
+        <div className="flex gap-1.5">
+          <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-bounce" style={{ animationDelay: '0ms' }}></div>
+          <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-bounce" style={{ animationDelay: '200ms' }}></div>
+          <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-bounce" style={{ animationDelay: '400ms' }}></div>
         </div>
       </div>
     </div>
   </div>
-); 
+);

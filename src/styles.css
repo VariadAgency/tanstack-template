@@ -26,6 +26,59 @@ body {
   border: 1px solid var(--variad-border);
 }
 
+/* 2026 Animated Background Glow */
+.bg-glow-container {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background-color: var(--variad-bg);
+}
+
+.glow-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.2;
+  mix-blend-mode: screen;
+  animation: blob-float 30s infinite alternate ease-in-out;
+}
+
+.blob-blue {
+  width: 70vw;
+  height: 70vw;
+  background: radial-gradient(circle, #1e40af 0%, transparent 70%);
+  top: -15%;
+  left: -10%;
+}
+
+.blob-cyan {
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, #0891b2 0%, transparent 70%);
+  bottom: -10%;
+  right: -5%;
+  animation-delay: -5s;
+  animation-duration: 40s;
+}
+
+.blob-indigo {
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, #4338ca 0%, transparent 70%);
+  top: 30%;
+  left: 15%;
+  animation-delay: -10s;
+  animation-duration: 50s;
+}
+
+@keyframes blob-float {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  33% { transform: translate(10vw, -15vh) rotate(120deg) scale(1.2); }
+  66% { transform: translate(-5vw, 10vh) rotate(240deg) scale(0.9); }
+  100% { transform: translate(0, 0) rotate(360deg) scale(1); }
+}
+
 .glass-sidebar {
   background: #020617;
   border-right: 1px solid var(--variad-border);

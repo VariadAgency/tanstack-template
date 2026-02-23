@@ -33,43 +33,47 @@ export const Sidebar = ({
     {/* Overlay for mobile */}
     {isOpen && (
       <div 
-        className="fixed inset-0 z-40 bg-black/50 md:hidden" 
+        className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden" 
         onClick={onClose}
       />
     )}
     
-    <div className={`fixed inset-y-0 left-0 z-50 flex flex-col w-64 glass-sidebar transition-transform duration-500 ease-in-out md:relative md:translate-x-0 ${
+    <div className={`fixed inset-y-0 left-0 z-50 flex flex-col w-64 bg-[#020617] border-r border-white/[0.04] transition-transform duration-500 ease-in-out md:relative md:translate-x-0 ${
       isOpen ? 'translate-x-0' : '-translate-x-full'
     }`}>
-      <div className="p-4 mb-2">
+      <div className="p-6">
         <button
           onClick={() => {
             handleNewChat();
             if (window.innerWidth < 768) onClose();
           }}
-          className="flex items-center justify-center w-full gap-2 px-3 py-2.5 text-xs font-bold tracking-widest text-white uppercase rounded-xl bg-cyan-500/20 border border-cyan-400/30 hover:bg-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300"
+          className="flex items-center justify-center w-full gap-2 px-3 py-2 text-[11px] font-bold tracking-widest text-white uppercase rounded bg-blue-600 hover:bg-blue-500 transition-all duration-300 shadow-xl shadow-blue-500/10"
         >
-          <PlusCircle className="w-4 h-4" />
+          <PlusCircle className="w-3.5 h-3.5" />
           New Thread
         </button>
       </div>
 
+      <div className="px-4 mb-4 text-[9px] font-black text-slate-600 uppercase tracking-[0.2em]">
+        History
+      </div>
+
       {/* Chat List */}
-      <div className="flex-1 overflow-y-auto no-scrollbar space-y-1 px-2">
+      <div className="flex-1 overflow-y-auto no-scrollbar space-y-0.5 px-3">
         {conversations.map((chat) => (
           <div
             key={chat.id}
-            className={`group flex items-center gap-3 px-3 py-2.5 cursor-pointer rounded-xl transition-all duration-200 border border-transparent ${
+            className={`group flex items-center gap-3 px-3 py-2 cursor-pointer rounded transition-all duration-200 ${
               chat.id === currentConversationId 
-                ? 'bg-white/10 border-white/10 text-white' 
-                : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
+                ? 'bg-white/[0.04] text-white shadow-sm' 
+                : 'text-slate-500 hover:bg-white/[0.02] hover:text-slate-300'
             }`}
             onClick={() => {
               setCurrentConversationId(chat.id);
               if (window.innerWidth < 768) onClose();
             }}
           >
-            <MessageCircle className={`w-4 h-4 ${chat.id === currentConversationId ? 'text-cyan-400' : 'text-slate-500'}`} />
+            <MessageCircle className={`w-3.5 h-3.5 ${chat.id === currentConversationId ? 'text-blue-500' : 'text-slate-600'}`} />
             {editingChatId === chat.id ? (
               <input
                 type="text"
@@ -91,11 +95,11 @@ export const Sidebar = ({
                     setEditingTitle('')
                   }
                 }}
-                className="flex-1 text-sm bg-transparent focus:outline-none text-white"
+                className="flex-1 text-xs bg-transparent focus:outline-none text-white font-medium"
                 autoFocus
               />
             ) : (
-              <span className="flex-1 text-sm truncate">
+              <span className="flex-1 text-[13px] font-medium truncate tracking-tight">
                 {chat.title}
               </span>
             )}
@@ -106,7 +110,7 @@ export const Sidebar = ({
                   setEditingChatId(chat.id)
                   setEditingTitle(chat.title)
                 }}
-                className="p-1 text-slate-500 hover:text-cyan-400 transition-colors"
+                className="p-1 text-slate-600 hover:text-blue-400 transition-colors"
               >
                 <Edit2 className="w-3 h-3" />
               </button>
@@ -115,7 +119,7 @@ export const Sidebar = ({
                   e.stopPropagation()
                   handleDeleteChat(chat.id)
                 }}
-                className="p-1 text-slate-500 hover:text-red-400 transition-colors"
+                className="p-1 text-slate-600 hover:text-red-400 transition-colors"
               >
                 <Trash2 className="w-3 h-3" />
               </button>
@@ -123,6 +127,18 @@ export const Sidebar = ({
           </div>
         ))}
       </div>
+      
+      <div className="p-6 border-t border-white/[0.03] mt-auto">
+        <div className="flex items-center gap-3">
+          <div className="w-7 h-7 rounded bg-gradient-to-br from-slate-700 to-slate-900 border border-white/5 flex items-center justify-center text-[10px] font-bold text-slate-400">
+            VA
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[11px] font-bold text-slate-200">Variad Agency</span>
+            <span className="text-[9px] text-slate-500 font-medium">Enterprise Edition</span>
+          </div>
+        </div>
+      </div>
     </div>
   </>
-); 
+);

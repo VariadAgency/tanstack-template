@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState, useRef, useCallback, useMemo } from 'react'
-import { Settings, Menu, X } from 'lucide-react'
+import { Settings, Menu } from 'lucide-react'
 import {
   SettingsDialog,
   ChatMessage,
@@ -10,8 +10,8 @@ import {
   WelcomeScreen,
   TopBanner
 } from '../components'
-import { useConversations, useAppState, store, actions } from '../store'
-import { genAIResponse, type Message } from '../utils'
+import { useConversations, useAppState, actions } from '../store'
+import { type Message } from '../utils'
 
 function Home() {
   const {
@@ -25,7 +25,7 @@ function Home() {
     addMessage,
   } = useConversations()
   
-  const { isLoading, setLoading, getActivePrompt } = useAppState()
+  const { isLoading, setLoading } = useAppState()
 
   // Memoize messages to prevent unnecessary re-renders
   const messages = useMemo(() => currentConversation?.messages || [], [currentConversation]);
@@ -54,12 +54,12 @@ function Home() {
     scrollToBottom(false)
   }, [messages, scrollToBottom])
 
-  // Smooth scroll during streaming
+  // Smooth scroll during loading
   useEffect(() => {
-    if (pendingMessage && isLoading) {
+    if (isLoading) {
       scrollToBottom(true)
     }
-  }, [pendingMessage, isLoading, scrollToBottom])
+  }, [isLoading, scrollToBottom])
 
   const createTitleFromInput = useCallback((text: string) => {
     const words = text.trim().split(/\s+/)
@@ -67,133 +67,64 @@ function Home() {
     return firstThreeWords + (words.length > 3 ? '...' : '')
   }, []);
 
-  // Helper function to process AI response
-  const processAIResponse = useCallback(async (conversationId: string, userMessage: Message) => {
+  // New helper function to process response from n8n
+  const processN8NResponse = useCallback(async (conversationId: string, userMessage: Message) => {
+    const N8N_WEBHOOK_URL = 'http://76.13.155.84:22612/webhook/843de30d-bcca-49f6-a8a2-9e5670add116';
+    
     try {
-      // Get active prompt
-      const activePrompt = getActivePrompt(store.state)
-      let systemPrompt
-      if (activePrompt) {
-        systemPrompt = {
-          value: activePrompt.content,
-          enabled: true,
-        }
-      }
-
-      // Get AI response
-      const response = await genAIResponse({
-        data: {
-          messages: [...messages, userMessage],
-          systemPrompt,
+      setLoading(true);
+      
+      const response = await fetch(N8N_WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      })
+        body: JSON.stringify({
+          prompt: userMessage.content
+        }),
+      });
 
-      const reader = response.body?.getReader()
-      if (!reader) {
-        throw new Error('No reader found in response')
+      if (!response.ok) {
+        throw new Error(`n8n Server error: ${response.status} ${response.statusText}`);
       }
 
-      const decoder = new TextDecoder()
+      const data = await response.json();
+      
+      // Extract the response text - assuming n8n returns something like { "output": "..." } or just the text
+      // We'll try common response fields or stringify if it's an object
+      let responseText = '';
+      if (typeof data === 'string') {
+        responseText = data;
+      } else if (data.output) {
+        responseText = data.output;
+      } else if (data.response) {
+        responseText = data.response;
+      } else if (data.text) {
+        responseText = data.text;
+      } else {
+        responseText = JSON.stringify(data, null, 2);
+      }
 
-      let done = false
-      let newMessage = {
-        id: (Date.now() + 1).toString(),
+      const assistantMessage: Message = {
+        id: Date.now().toString(),
         role: 'assistant' as const,
-        content: '',
-      }
-      let buffer = '' // Buffer to accumulate partial JSON chunks
-      let pendingTextQueue: string[] = [] // Queue of text chunks to render
-      let isRendering = false
+        content: responseText,
+      };
 
-      // Smooth character-by-character rendering with adaptive speed
-      const renderTextSmoothly = async () => {
-        if (isRendering) return
-        isRendering = true
-
-        while (pendingTextQueue.length > 0) {
-          const chunk = pendingTextQueue.shift()!
-
-          // Adaptive rendering: faster for code blocks, smoother for regular text
-          const isCodeBlock = newMessage.content.includes('```') &&
-                             newMessage.content.split('```').length % 2 === 0
-
-          // Characters per frame and delay based on content type
-          const charsPerFrame = isCodeBlock ? 5 : 2 // Faster for code
-          const delay = isCodeBlock ? 2 : 5 // Shorter delay for code
-
-          for (let i = 0; i < chunk.length; i += charsPerFrame) {
-            const slice = chunk.slice(i, i + charsPerFrame)
-            newMessage = {
-              ...newMessage,
-              content: newMessage.content + slice,
-            }
-            setPendingMessage({ ...newMessage })
-
-            // Dynamic delay for natural typing rhythm
-            // ~200-400 chars per second for text, ~500 chars per second for code
-            await new Promise(resolve => setTimeout(resolve, delay))
-          }
-        }
-
-        isRendering = false
-      }
-
-      const scheduleUIUpdate = (text: string) => {
-        pendingTextQueue.push(text)
-        renderTextSmoothly()
-      }
-
-      while (!done) {
-        const out = await reader.read()
-        done = out.done
-        if (!done && out.value) {
-          // Decode the chunk and add to buffer
-          buffer += decoder.decode(out.value, { stream: true })
-
-          // Split by newlines to get complete JSON objects
-          const lines = buffer.split('\n')
-
-          // Keep the last incomplete line in the buffer
-          buffer = lines.pop() || ''
-
-          // Process each complete line
-          for (const line of lines) {
-            if (line.trim()) {
-              try {
-                const json = JSON.parse(line)
-                if (json.type === 'content_block_delta' && json.delta?.text) {
-                  scheduleUIUpdate(json.delta.text)
-                }
-              } catch (e) {
-                console.error('Error parsing streaming response:', e, 'Line:', line)
-              }
-            }
-          }
-        }
-      }
-
-      // Wait for any remaining text to finish rendering
-      while (pendingTextQueue.length > 0 || isRendering) {
-        await new Promise(resolve => setTimeout(resolve, 50))
-      }
-
-      setPendingMessage(null)
-      if (newMessage.content.trim()) {
-        // Add AI message to Convex
-        console.log('Adding AI response to conversation:', conversationId)
-        await addMessage(conversationId, newMessage)
-      }
+      await addMessage(conversationId, assistantMessage);
+      
     } catch (error) {
-      console.error('Error in AI response:', error)
-      // Add an error message to the conversation
+      console.error('Error in n8n response:', error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant' as const,
-        content: 'Sorry, I encountered an error generating a response. Please set the required API keys in your environment variables.',
-      }
-      await addMessage(conversationId, errorMessage)
+        content: 'Fehler: Der n8n-Server ist nicht erreichbar oder hat ungültig geantwortet. Bitte prüfe den Webhook.',
+      };
+      await addMessage(conversationId, errorMessage);
+    } finally {
+      setLoading(false);
     }
-  }, [messages, getActivePrompt, addMessage]);
+  }, [addMessage, setLoading]);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
@@ -201,7 +132,6 @@ function Home() {
 
     const currentInput = input
     setInput('') // Clear input early for better UX
-    setLoading(true)
     setError(null)
     
     const conversationTitle = createTitleFromInput(currentInput)
@@ -219,31 +149,15 @@ function Home() {
       // If no current conversation, create one in Convex first
       if (!conversationId) {
         try {
-          console.log('Creating new Convex conversation with title:', conversationTitle)
-          // Create a new conversation with our title
           const convexId = await createNewConversation(conversationTitle)
-          
           if (convexId) {
-            console.log('Successfully created Convex conversation with ID:', convexId)
             conversationId = convexId
-            
-            // Add user message directly to Convex
-            console.log('Adding user message to Convex conversation:', userMessage.content)
             await addMessage(conversationId, userMessage)
           } else {
-            console.warn('Failed to create Convex conversation, falling back to local')
-            // Fallback to local storage if Convex creation failed
+            // Fallback to local
             const tempId = Date.now().toString()
-            const tempConversation = {
-              id: tempId,
-              title: conversationTitle,
-              messages: [],
-            }
-            
-            actions.addConversation(tempConversation)
+            actions.addConversation({ id: tempId, title: conversationTitle, messages: [] })
             conversationId = tempId
-            
-            // Add user message to local state
             actions.addMessage(conversationId, userMessage)
           }
         } catch (error) {
@@ -251,35 +165,21 @@ function Home() {
           throw new Error('Failed to create conversation')
         }
       } else {
-        // We already have a conversation ID, add message directly to Convex
-        console.log('Adding user message to existing conversation:', conversationId)
         await addMessage(conversationId, userMessage)
       }
       
-      // Process with AI after message is stored
-      await processAIResponse(conversationId, userMessage)
+      // Process with n8n instead of internal AI
+      await processN8NResponse(conversationId, userMessage)
       
     } catch (error) {
       console.error('Error:', error)
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant' as const,
-        content: 'Sorry, I encountered an error processing your request.',
+      if (error instanceof Error) {
+        setError(error.message)
+      } else {
+        setError('An unknown error occurred.')
       }
-      if (currentConversationId) {
-        await addMessage(currentConversationId, errorMessage)
-      }
-      else {
-        if (error instanceof Error) {
-          setError(error.message)
-        } else {
-          setError('An unknown error occurred.')
-        }
-      }
-    } finally {
-      setLoading(false)
     }
-  }, [input, isLoading, createTitleFromInput, currentConversationId, createNewConversation, addMessage, processAIResponse, setLoading]);
+  }, [input, isLoading, createTitleFromInput, currentConversationId, createNewConversation, addMessage, processN8NResponse]);
 
   const handleNewChat = useCallback(() => {
     createNewConversation()
@@ -296,41 +196,26 @@ function Home() {
   }, [updateConversationTitle]);
 
   return (
-    <div className="relative flex h-screen overflow-hidden text-slate-200 selection:bg-cyan-500/30">
-      {/* 2026 Background Engine */}
-      <div className="bg-glow-container">
-        <div className="blob blob-1" />
-        <div className="blob blob-2" />
-        <div className="blob blob-3" />
-        <div className="film-grain" />
-      </div>
-
+    <div className="relative flex h-screen overflow-hidden bg-[#020617] text-slate-200 selection:bg-blue-500/30">
+      {/* Variad Style Background */}
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-[#020617] to-[#020617]" />
+      
       {/* Mobile Header */}
-      <div className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between p-4 glass-panel md:hidden">
+      <div className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between p-4 border-b border-white/5 bg-[#020617]/80 backdrop-blur-md md:hidden">
         <button
           onClick={() => setIsSidebarOpen(true)}
-          className="p-2 text-slate-400 hover:text-cyan-400 transition-colors"
+          className="p-2 text-slate-400 hover:text-blue-400 transition-colors"
         >
           <Menu className="w-6 h-6" />
         </button>
-        <span className="text-xs font-bold tracking-widest uppercase text-slate-400">
-          {currentConversation?.title || 'TIM-KEK'}
+        <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-500">
+          TIM-KEK &bull; Variad Edition
         </span>
         <button
           onClick={() => setIsSettingsOpen(true)}
-          className="p-2 text-slate-400 hover:text-cyan-400 transition-colors"
+          className="p-2 text-slate-400 hover:text-blue-400 transition-colors"
         >
           <Settings className="w-6 h-6" />
-        </button>
-      </div>
-
-      {/* Desktop Settings Button */}
-      <div className="absolute z-50 hidden top-5 right-5 md:block">
-        <button
-          onClick={() => setIsSettingsOpen(true)}
-          className="flex items-center justify-center w-10 h-10 transition-all duration-300 rounded-full glass-panel hover:bg-white/10 group focus:outline-none"
-        >
-          <Settings className="w-5 h-5 group-hover:rotate-45 transition-transform text-slate-400 group-hover:text-cyan-400" />
         </button>
       </div>
 
@@ -351,19 +236,23 @@ function Home() {
       />
 
       {/* Main Content */}
-      <div className="flex flex-col flex-1 min-w-0 pt-16 md:pt-0 relative z-10">
-        <TopBanner />
+      <div className="flex flex-col flex-1 min-w-0 relative z-10">
         {error && (
-          <p className="w-full max-w-3xl p-4 mx-auto font-bold text-cyan-400 animate-pulse">{error}</p>
+          <div className="w-full max-w-3xl px-4 mx-auto mt-20 md:mt-8">
+            <div className="p-4 rounded-xl border border-red-500/20 bg-red-500/10 text-red-400 text-sm font-medium">
+              {error}
+            </div>
+          </div>
         )}
+        
         {currentConversationId ? (
           <>
             {/* Messages */}
             <div
               ref={messagesContainerRef}
-              className="flex-1 pb-32 overflow-y-auto messages-container no-scrollbar"
+              className="flex-1 pb-32 overflow-y-auto no-scrollbar pt-20 md:pt-8"
             >
-              <div className="w-full max-w-3xl px-4 mx-auto space-y-2">
+              <div className="w-full max-w-3xl px-4 mx-auto space-y-8">
                 {[...messages, pendingMessage]
                   .filter((message): message is Message => message !== null)
                   .map((message) => (
@@ -386,12 +275,14 @@ function Home() {
             />
           </>
         ) : (
-          <WelcomeScreen 
-            input={input}
-            setInput={setInput}
-            handleSubmit={handleSubmit}
-            isLoading={isLoading}
-          />
+          <div className="flex-1 flex items-center justify-center">
+            <WelcomeScreen 
+              input={input}
+              setInput={setInput}
+              handleSubmit={handleSubmit}
+              isLoading={isLoading}
+            />
+          </div>
         )}
       </div>
 

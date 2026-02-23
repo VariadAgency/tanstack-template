@@ -1,76 +1,39 @@
 @import "tailwindcss";
 @import "highlight.js/styles/github-dark.css";
 
-/* 2026 Color Palette & Design Tokens */
+/* Variad Edition Color Palette */
 :root {
-  --deep-blue: #020617;
-  --aqua-500: #06b6d4;
-  --aqua-400: #22d3ee;
-  --aqua-300: #67e8f9;
+  --variad-bg: #020617;
+  --variad-blue: #3b82f6;
+  --variad-blue-light: #60a5fa;
+  --variad-border: rgba(255, 255, 255, 0.04);
+  --variad-surface: rgba(255, 255, 255, 0.02);
 }
 
 body {
   margin: 0;
-  background-color: var(--deep-blue);
-  color: #e2e8f0; /* slate-200 */
+  background-color: var(--variad-bg);
+  color: #f1f5f9; /* slate-100 */
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  letter-spacing: -0.011em;
   -webkit-font-smoothing: antialiased;
 }
 
-/* 2026 Animated Background Blobs */
-.bg-glow-container {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  overflow: hidden;
-  background: var(--deep-blue);
-}
-
-.blob {
-  position: absolute;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, rgba(6, 182, 212, 0) 70%);
-  filter: blur(80px);
-  border-radius: 50%;
-  animation: move 20s infinite alternate;
-}
-
-.blob-1 { top: -10%; left: -10%; animation-duration: 25s; }
-.blob-2 { bottom: -10%; right: -10%; background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0) 70%); animation-duration: 30s; }
-.blob-3 { top: 40%; left: 30%; background: radial-gradient(circle, rgba(34, 211, 238, 0.1) 0%, rgba(34, 211, 238, 0) 70%); animation-duration: 22s; }
-
-@keyframes move {
-  from { transform: translate(0, 0) scale(1); }
-  to { transform: translate(100px, 50px) scale(1.1); }
-}
-
-/* Film Grain Effect */
-.film-grain {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.05;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3Ex3Cfilter id='noiseFilter'%3Ex3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3Ex3C/filter%3Ex3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3Ex3C/svg%3E");
-}
-
-/* Glassmorphism Classes */
+/* Minimalist Design Patterns */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--variad-surface);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--variad-border);
 }
 
 .glass-sidebar {
-  background: rgba(2, 6, 23, 0.4);
-  backdrop-filter: blur(40px);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  background: #020617;
+  border-right: 1px solid var(--variad-border);
 }
 
-/* Scrollbar Modernization */
+/* Scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -78,84 +41,61 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(6, 182, 212, 0.2);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 99px;
-  transition: background 0.2s ease;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(6, 182, 212, 0.4);
-}
-
-@media (max-width: 768px) {
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-}
-
-/* Prose Override for Aqua Theme */
+/* Typography for Variad */
 .prose {
   max-width: none;
-  color: #94a3b8; /* slate-400 */
-}
-
-.prose a {
-  color: var(--aqua-400);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(34, 211, 238, 0.3);
-  transition: border-color 0.2s;
-}
-
-.prose a:hover {
-  border-bottom-color: var(--aqua-400);
-}
-
-.prose code {
-  color: var(--aqua-300);
-  background: rgba(6, 182, 212, 0.1);
-  padding: 0.125rem 0.375rem;
-  border-radius: 0.375rem;
-  border: 1px solid rgba(6, 182, 212, 0.2);
-}
-
-.prose pre {
-  background: rgba(2, 6, 23, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 0.75rem;
-  padding: 1rem;
+  color: #cbd5e1; /* slate-300 */
 }
 
 .prose h1, .prose h2, .prose h3 {
-  color: #f8fafc; /* slate-50 */
+  color: #f8fafc;
   font-weight: 600;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
 }
 
-.prose blockquote {
-  border-left: 2px solid var(--aqua-500);
-  background: rgba(6, 182, 212, 0.05);
-  padding: 0.5rem 1rem;
-  border-radius: 0 0.5rem 0.5rem 0;
+.prose p {
+  line-height: 1.75;
+  margin-bottom: 1.5rem;
 }
 
-/* Cursor Glow */
+.prose code {
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(59, 130, 246, 0.1);
+  color: #93c5fd;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.85em;
+}
+
+.prose pre {
+  background: #0a0f1d;
+  border: 1px solid var(--variad-border);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+
+/* Utilities */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
 .streaming-cursor::after {
-  content: '▋';
-  color: var(--aqua-400);
-  animation: pulse 1.5s infinite;
+  content: ' ';
+  display: inline-block;
+  width: 8px;
+  height: 15px;
+  background: var(--variad-blue);
+  animation: blink 1s step-end infinite;
   margin-left: 4px;
+  vertical-align: middle;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+@keyframes blink {
+  from, to { opacity: 1; }
+  50% { opacity: 0; }
 }
-
-/* Custom Utilities that Tailwind couldn't find */
-.text-aqua-400 { color: var(--aqua-400); }
-.text-aqua-300 { color: var(--aqua-300); }
-.bg-aqua-500\/20 { background-color: rgba(6, 182, 212, 0.2); }
-.border-aqua-400\/30 { border-color: rgba(34, 211, 238, 0.3); }
-.bg-aqua-500\/30 { background-color: rgba(6, 182, 212, 0.3); }
-.border-aqua-400\/50 { border-color: rgba(34, 211, 238, 0.5); }
-.shadow-aqua-500\/20 { box-shadow: 0 10px 15px -3px rgba(6, 182, 212, 0.2); }
-.selection\:bg-aqua-500\/30 ::selection { background-color: rgba(6, 182, 212, 0.3); }

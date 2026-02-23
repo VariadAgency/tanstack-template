@@ -13,7 +13,7 @@ export const ChatInput = ({
   handleSubmit, 
   isLoading 
 }: ChatInputProps) => (
-  <div className="fixed bottom-0 left-0 right-0 z-20 md:left-64 p-4 md:p-8">
+  <div className="fixed bottom-0 left-0 right-0 z-20 md:left-64 p-6 md:p-10 bg-gradient-to-t from-[#020617] via-[#020617]/90 to-transparent">
     <div className="w-full max-w-3xl mx-auto">
       <form onSubmit={handleSubmit}>
         <div className="relative group">
@@ -26,8 +26,8 @@ export const ChatInput = ({
                 handleSubmit(e)
               }
             }}
-            placeholder="Talk to TIM-KEK..."
-            className="w-full py-4 pl-6 pr-14 overflow-hidden text-sm text-white placeholder-slate-500 rounded-2xl glass-panel focus:bg-white/10 focus:ring-1 focus:ring-cyan-400/50 focus:border-cyan-400/30 transition-all duration-300 resize-none shadow-2xl"
+            placeholder="Type your message..."
+            className="w-full py-4 pl-6 pr-14 overflow-hidden text-sm text-white placeholder-slate-600 rounded-xl bg-white/[0.03] border border-white/[0.05] focus:bg-white/[0.05] focus:border-blue-500/30 transition-all duration-300 resize-none focus:outline-none"
             rows={1}
             style={{ minHeight: '56px', maxHeight: '200px' }}
             onInput={(e) => {
@@ -40,7 +40,7 @@ export const ChatInput = ({
           <button
             type="submit"
             disabled={!input.trim() || isLoading}
-            className="absolute p-3 text-cyan-400 transition-all -translate-y-1/2 right-2 top-1/2 hover:scale-110 active:scale-95 disabled:text-slate-600 disabled:opacity-50"
+            className="absolute p-3 text-blue-500 transition-all -translate-y-1/2 right-2 top-1/2 hover:scale-110 active:scale-95 disabled:text-slate-700 disabled:opacity-50"
           >
             <Send className="w-5 h-5" />
           </button>
@@ -48,4 +48,4 @@ export const ChatInput = ({
       </form>
     </div>
   </div>
-); 
+);

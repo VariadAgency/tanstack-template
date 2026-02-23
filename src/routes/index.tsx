@@ -194,11 +194,14 @@ function Home() {
 
   return (
     <div className="relative flex h-screen overflow-hidden bg-[#020617] text-slate-200 selection:bg-blue-500/30">
-      {/* Moving Glow Engine (Variad Blue Edition) */}
+      {/* High-End Glow Engine (Variad.de Inspired - Blue Edition) */}
       <div className="bg-glow-container">
-        <div className="glow-blob blob-blue" />
-        <div className="glow-blob blob-cyan" />
-        <div className="glow-blob blob-indigo" />
+        <div className="glow g1" />
+        <div className="glow g2" />
+        <div className="glow g3" />
+        <div className="glow g4" />
+        <div className="glow g5" />
+        <div className="film-grain" />
       </div>
       
       {/* Mobile Header */}

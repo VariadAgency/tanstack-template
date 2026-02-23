@@ -8,6 +8,13 @@
   --variad-blue-light: #60a5fa;
   --variad-border: rgba(255, 255, 255, 0.04);
   --variad-surface: rgba(255, 255, 255, 0.02);
+  
+  /* Glow Colors - Blue/Aqua/Dark Theme */
+  --glow-1: rgba(30, 64, 175, 0.6);  /* Blue 800 */
+  --glow-2: rgba(8, 145, 178, 0.5);  /* Cyan 600 */
+  --glow-3: rgba(67, 56, 202, 0.5);  /* Indigo 700 */
+  --glow-4: rgba(2, 132, 199, 0.4);   /* Sky 600 */
+  --glow-5: rgba(14, 116, 144, 0.4);  /* Cyan 700 */
 }
 
 body {
@@ -19,64 +26,85 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Minimalist Design Patterns */
-.glass-panel {
-  background: var(--variad-surface);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--variad-border);
-}
-
-/* 2026 Animated Background Glow */
+/* 2026 High-End Glow Engine (Inspired by Variad.de) */
 .bg-glow-container {
   position: fixed;
   inset: 0;
   z-index: -1;
   overflow: hidden;
   background-color: var(--variad-bg);
+  pointer-events: none;
 }
 
-.glow-blob {
+.glow {
   position: absolute;
+  width: 90vmax;
+  height: 90vmax;
   border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.2;
+  opacity: 0.35;
+  will-change: transform, opacity;
   mix-blend-mode: screen;
-  animation: blob-float 30s infinite alternate ease-in-out;
+  filter: blur(100px) saturate(150%);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
 }
 
-.blob-blue {
-  width: 70vw;
-  height: 70vw;
-  background: radial-gradient(circle, #1e40af 0%, transparent 70%);
-  top: -15%;
-  left: -10%;
+/* GPU-accelerated Animations for smooth 60fps movement */
+@keyframes floatA { 0% { transform: translate3d(-10%, 5%, 0) scale(1); } 100% { transform: translate3d(10%, -5%, 0) scale(1.1); } }
+@keyframes floatB { 0% { transform: translate3d(8%, 10%, 0) scale(1.1); } 100% { transform: translate3d(-8%, -10%, 0) scale(0.95); } }
+@keyframes floatC { 0% { transform: translate3d(-5%, -15%, 0) scale(0.9); } 100% { transform: translate3d(5%, 15%, 0) scale(1.05); } }
+@keyframes floatD { 0% { transform: translate3d(12%, -8%, 0) scale(1.05); } 100% { transform: translate3d(-12%, 8%, 0) scale(1); } }
+@keyframes floatE { 0% { transform: translate3d(0%, 0%, 0) scale(0.95); } 100% { transform: translate3d(6%, -6%, 0) scale(1.1); } }
+
+@keyframes pulse { 0% { opacity: 0.28; } 100% { opacity: 0.42; } }
+
+/* Glow Elements with fast, smooth transitions */
+.glow.g1 { 
+  background: radial-gradient(closest-side, var(--glow-1), rgba(30,64,175,0)); 
+  top: -15%; left: -25%; 
+  animation: floatA 12s infinite alternate, pulse 7s infinite alternate; 
+}
+.glow.g2 { 
+  background: radial-gradient(closest-side, var(--glow-2), rgba(8,145,178,0)); 
+  bottom: -15%; right: -20%; 
+  animation: floatB 14s infinite alternate, pulse 8s infinite alternate; 
+  animation-delay: -2s;
+}
+.glow.g3 { 
+  background: radial-gradient(closest-side, var(--glow-3), rgba(67,56,202,0)); 
+  top: 10%; right: -10%; 
+  animation: floatC 15s infinite alternate, pulse 9s infinite alternate; 
+  animation-delay: -4s;
+}
+.glow.g4 { 
+  background: radial-gradient(closest-side, var(--glow-4), rgba(2,132,199,0)); 
+  bottom: 10%; left: -10%; 
+  animation: floatD 13s infinite alternate, pulse 7.5s infinite alternate; 
+  animation-delay: -1s;
+}
+.glow.g5 { 
+  background: radial-gradient(closest-side, var(--glow-5), rgba(14,116,144,0)); 
+  top: 40%; left: 25%; 
+  animation: floatE 16s infinite alternate, pulse 8.5s infinite alternate; 
+  animation-delay: -3s;
 }
 
-.blob-cyan {
-  width: 60vw;
-  height: 60vw;
-  background: radial-gradient(circle, #0891b2 0%, transparent 70%);
-  bottom: -10%;
-  right: -5%;
-  animation-delay: -5s;
-  animation-duration: 40s;
+/* Subtle Film Grain */
+.film-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3Ex3Cfilter id='noiseFilter'%3Ex3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3Ex3C/filter%3Ex3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3Ex3C/svg%3E");
 }
 
-.blob-indigo {
-  width: 50vw;
-  height: 50vw;
-  background: radial-gradient(circle, #4338ca 0%, transparent 70%);
-  top: 30%;
-  left: 15%;
-  animation-delay: -10s;
-  animation-duration: 50s;
-}
-
-@keyframes blob-float {
-  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
-  33% { transform: translate(10vw, -15vh) rotate(120deg) scale(1.2); }
-  66% { transform: translate(-5vw, 10vh) rotate(240deg) scale(0.9); }
-  100% { transform: translate(0, 0) rotate(360deg) scale(1); }
+/* Minimalist Design Patterns */
+.glass-panel {
+  background: var(--variad-surface);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--variad-border);
 }
 
 .glass-sidebar {

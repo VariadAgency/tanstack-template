@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState, useRef, useCallback, useMemo } from 'react'
-import { Settings } from 'lucide-react'
+import { Settings, Menu, X } from 'lucide-react'
 import {
   SettingsDialog,
   ChatMessage,
@@ -35,6 +35,7 @@ function Home() {
   const [editingChatId, setEditingChatId] = useState<string | null>(null)
   const [editingTitle, setEditingTitle] = useState('')
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const [pendingMessage, setPendingMessage] = useState<Message | null>(null)
   const [error, setError] = useState<string | null>(null);
@@ -296,8 +297,27 @@ function Home() {
 
   return (
     <div className="relative flex h-screen bg-gray-900">
-      {/* Settings Button */}
-      <div className="absolute z-50 top-5 right-5">
+      {/* Mobile Header */}
+      <div className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between p-4 bg-gray-900 border-b border-gray-800 md:hidden">
+        <button
+          onClick={() => setIsSidebarOpen(true)}
+          className="p-2 text-gray-400 hover:text-white"
+        >
+          <Menu className="w-6 h-6" />
+        </button>
+        <span className="text-sm font-semibold text-white truncate">
+          {currentConversation?.title || 'New Chat'}
+        </span>
+        <button
+          onClick={() => setIsSettingsOpen(true)}
+          className="p-2 text-gray-400 hover:text-white"
+        >
+          <Settings className="w-6 h-6" />
+        </button>
+      </div>
+
+      {/* Desktop Settings Button */}
+      <div className="absolute z-50 hidden top-5 right-5 md:block">
         <button
           onClick={() => setIsSettingsOpen(true)}
           className="flex items-center justify-center w-10 h-10 text-white transition-opacity rounded-full bg-gradient-to-r from-orange-500 to-red-600 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -318,10 +338,12 @@ function Home() {
         editingTitle={editingTitle}
         setEditingTitle={setEditingTitle}
         handleUpdateChatTitle={handleUpdateChatTitle}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
       />
 
       {/* Main Content */}
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1 min-w-0 pt-16 md:pt-0">
         <TopBanner />
         {error && (
           <p className="w-full max-w-3xl p-4 mx-auto font-bold text-orange-500">{error}</p>

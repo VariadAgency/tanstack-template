@@ -13,7 +13,7 @@ export const ChatInput = ({
   handleSubmit, 
   isLoading 
 }: ChatInputProps) => (
-  <div className="absolute bottom-0 right-0 border-t left-64 bg-gray-900/80 backdrop-blur-sm border-orange-500/10">
+  <div className="fixed bottom-0 left-0 right-0 z-10 border-t bg-gray-900/80 backdrop-blur-sm border-orange-500/10 md:left-64">
     <div className="w-full max-w-3xl px-4 py-3 mx-auto">
       <form onSubmit={handleSubmit}>
         <div className="relative">
@@ -26,7 +26,7 @@ export const ChatInput = ({
                 handleSubmit(e)
               }
             }}
-            placeholder="Type something clever (or don't, we won't judge)..."
+            placeholder="Type something clever..."
             className="w-full py-3 pl-4 pr-12 overflow-hidden text-sm text-white placeholder-gray-400 border rounded-lg shadow-lg resize-none border-orange-500/20 bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-transparent"
             rows={1}
             style={{ minHeight: '44px', maxHeight: '200px' }}

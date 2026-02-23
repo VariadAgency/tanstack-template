@@ -16,7 +16,7 @@ export const WelcomeScreen = ({
   <div className="w-full max-w-xl px-4 animate-in fade-in duration-1000">
     <div className="text-center mb-12">
       <h1 className="text-4xl md:text-5xl font-semibold tracking-tighter text-white mb-4">
-        TIM-KEK
+        TIM-KEK-AI
       </h1>
       <p className="text-[10px] md:text-xs font-bold text-slate-500 tracking-[0.3em] uppercase">
         Intelligence Redefined &bull; Variad Edition

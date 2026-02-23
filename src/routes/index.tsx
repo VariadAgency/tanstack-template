@@ -213,7 +213,7 @@ function Home() {
           <Menu className="w-6 h-6" />
         </button>
         <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-500">
-          TIM-KEK &bull; Variad Edition
+          TIM-KEK-AI &bull; Variad Edition
         </span>
         <div className="w-10" />
       </div>
